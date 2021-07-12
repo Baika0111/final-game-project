@@ -1,12 +1,340 @@
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+enum ActionKind {
+    Walking,
+    Idle,
+    Jumping,
+    standing_right,
+    standing_left,
+    right,
+    left,
+    forward,
+    backward
+}
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.backward)
 })
-controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+function standing_animation () {
+    standing_right = animation.createAnimation(ActionKind.standing_right, 1000)
+    standing_right.addAnimationFrame(img`
+        . f f f . f f f f f . . . . 
+        f f f f f c c c c f f . . . 
+        f f f f b c c c c c c f . . 
+        f f f c 3 c c c c c c f . . 
+        . f 3 3 c c c c c c c c f . 
+        . f f f c c c c c 4 c c f . 
+        . f f f f c c c 4 4 e f f . 
+        . f f 4 4 f b f 4 4 e f f . 
+        . . f 4 d 4 1 f d d f f . . 
+        . . f f f 4 d d d d f . . . 
+        . . . f e e 4 4 4 e f . . . 
+        . . . 4 d d e 3 3 3 f . . . 
+        . . . e d d e 3 3 3 f . . . 
+        . . . f e e f 6 6 6 f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . f f f . . . . . . 
+        `)
+    standing_right.addAnimationFrame(img`
+        . f f f . f f f f f . . . . 
+        f f f f f c c c c f f . . . 
+        f f f f b c c c c c c f . . 
+        f f f c 3 c c c c c c f . . 
+        . f 3 3 c c c c c c c c f . 
+        . f f f c c c c c 4 c c f . 
+        . f f f f c c c 4 4 e f f . 
+        . f f 4 4 f b f 4 4 e f f . 
+        . . f 4 d 4 1 f d d f f . . 
+        . . f f f 4 d d d d f . . . 
+        . . . f e e 4 4 4 e f . . . 
+        . . . 4 d d e 3 3 3 f . . . 
+        . . . e d d e 3 3 3 f . . . 
+        . . . f e e f 6 6 6 f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . f f f . . . . . . 
+        `)
+    standing_left = animation.createAnimation(ActionKind.standing_left, 1000)
+    standing_left.addAnimationFrame(img`
+        . . . . f f f f f . f f f . 
+        . . . f f c c c c f f f f f 
+        . . f c c c c c c b f f f f 
+        . . f c c c c c c 3 c f f f 
+        . f c c c c c c c c 3 3 f . 
+        . f c c 4 c c c c c f f f . 
+        . f f e 4 4 c c c f f f f . 
+        . f f e 4 4 f b f 4 4 f f . 
+        . . f f d d f 1 4 d 4 f . . 
+        . . . f d d d d 4 f f f . . 
+        . . . f e 4 4 4 e e f . . . 
+        . . . f 3 3 3 e d d 4 . . . 
+        . . . f 3 3 3 e d d e . . . 
+        . . . f 6 6 6 f e e f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . . f f f . . . . . 
+        `)
+    standing_left.addAnimationFrame(img`
+        . . . . f f f f f . f f f . 
+        . . . f f c c c c f f f f f 
+        . . f c c c c c c b f f f f 
+        . . f c c c c c c 3 c f f f 
+        . f c c c c c c c c 3 3 f . 
+        . f c c 4 c c c c c f f f . 
+        . f f e 4 4 c c c f f f f . 
+        . f f e 4 4 f b f 4 4 f f . 
+        . . f f d d f 1 4 d 4 f . . 
+        . . . f d d d d 4 f f f . . 
+        . . . f e 4 4 4 e e f . . . 
+        . . . f 3 3 3 e d d 4 . . . 
+        . . . f 3 3 3 e d d e . . . 
+        . . . f 6 6 6 f e e f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . . f f f . . . . . 
+        `)
+    animation.attachAnimation(BB, standing_right)
+    animation.attachAnimation(BB, standing_left)
+}
+controller.down.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.forward)
+})
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.left)
+})
+controller.right.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.right)
+})
+controller.left.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.left)
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.right)
+})
+function player1 () {
+    BB = sprites.create(img`
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c 4 4 c c c c f . 
+        . f f c c 4 4 4 4 c c f f . 
+        . f f f b f 4 4 f b f f f . 
+        . f f 4 1 f d d f 1 4 f f . 
+        . . f f d d d d d d f f . . 
+        . . e f e 4 4 4 4 e f e . . 
+        . e 4 f b 3 3 3 3 b f 4 e . 
+        . 4 d f 3 3 3 3 3 3 c d 4 . 
+        . 4 4 f 6 6 6 6 6 6 f 4 4 . 
+        . . . . f f f f f f . . . . 
+        . . . . f f . . f f . . . . 
+        `, SpriteKind.Player)
+    controller.moveSprite(BB, 70, 70)
+    walking_animation()
+    animation.setAction(BB, ActionKind.standing_right)
+}
+controller.up.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.backward)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.forward)
 })
 function startLevel () {
+    scene.setBackgroundColor(1)
     tiles.setTilemap(tilemap`level1`)
 }
+function walking_animation () {
+    anim_walk_right = animation.createAnimation(ActionKind.right, 100)
+    anim_walk_right.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f f . . . . 
+        f f f f f c c c c f f . . . 
+        f f f f b c c c c c c f . . 
+        f f f c 3 c c c c c c f . . 
+        . f 3 3 c c c c c c c c f . 
+        . f f f c c c c c 4 c c f . 
+        . f f f f c c c 4 4 c f f . 
+        . f f 4 4 f b f 4 4 f f f . 
+        . f f 4 d 4 1 f d d c f . . 
+        . . f f f 4 d d d d f . . . 
+        . . 4 d d e 4 4 4 e f . . . 
+        . . e d d e 3 3 3 3 f . . . 
+        . . f e e f 6 6 6 6 f f . . 
+        . . f f f f f f f f f f . . 
+        . . . f f . . . f f f . . . 
+        `)
+    anim_walk_right.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f f . . . . 
+        f f f f f c c c c f f . . . 
+        f f f f b c c c c c c f . . 
+        f f f c 3 c c c c c c f . . 
+        . f 3 3 c c c c c c c c f . 
+        . f f f c c c c c 4 c c f . 
+        . f f f f c c c 4 4 c f f . 
+        . f f 4 4 f b f 4 4 f f f . 
+        . . f 4 d 4 1 f d d f f . . 
+        . . f f f e e d d d f . . . 
+        . . . f 4 d d e 4 e f . . . 
+        . . . f e d d e 3 3 f . . . 
+        . . f f f e e f 6 6 f f . . 
+        . . f f f f f f f f f f . . 
+        . . . f f . . . f f f . . . 
+        `)
+    anim_walk_right.addAnimationFrame(img`
+        . f f f . f f f f f . . . . 
+        f f f f f c c c c f f . . . 
+        f f f f b c c c c c c f . . 
+        f f f c 3 c c c c c c f . . 
+        . f 3 3 c c c c c c c c f . 
+        . f f f c c c c c 4 c c f . 
+        . f f f f c c c 4 4 e f f . 
+        . f f 4 4 f b f 4 4 e f f . 
+        . . f 4 d 4 1 f d d f f . . 
+        . . f f f 4 d d d d f . . . 
+        . . . f e e 4 4 4 e f . . . 
+        . . . 4 d d e 3 3 3 f . . . 
+        . . . e d d e 3 3 3 f . . . 
+        . . . f e e f 6 6 6 f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . f f f . . . . . . 
+        `)
+    anim_walk_left = animation.createAnimation(ActionKind.left, 100)
+    anim_walk_left.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . . . . f f f f f . f f f . 
+        . . . f f c c c c f f f f f 
+        . . f c c c c c c b f f f f 
+        . . f c c c c c c 3 c f f f 
+        . f c c c c c c c c 3 3 f . 
+        . f c c 4 c c c c c f f f . 
+        . f f c 4 4 c c c f f f f . 
+        . f f f 4 4 f b f 4 4 f f . 
+        . . f c d d f 1 4 d 4 f f . 
+        . . . f d d d d 4 f f f . . 
+        . . . f e 4 4 4 e d d 4 . . 
+        . . . f 3 3 3 3 e d d e . . 
+        . . f f 6 6 6 6 f e e f . . 
+        . . f f f f f f f f f f . . 
+        . . . f f f . . . f f . . . 
+        `)
+    anim_walk_left.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . . . . f f f f f . f f f . 
+        . . . f f c c c c f f f f f 
+        . . f c c c c c c b f f f f 
+        . . f c c c c c c 3 c f f f 
+        . f c c c c c c c c 3 3 f . 
+        . f c c 4 c c c c c f f f . 
+        . f f c 4 4 c c c f f f f . 
+        . f f f 4 4 f b f 4 4 f f . 
+        . . f f d d f 1 4 d 4 f . . 
+        . . . f d d d e e f f f . . 
+        . . . f e 4 e d d 4 f . . . 
+        . . . f 3 3 e d d e f . . . 
+        . . f f 6 6 f e e f f f . . 
+        . . f f f f f f f f f f . . 
+        . . . f f f . . . f f . . . 
+        `)
+    anim_walk_left.addAnimationFrame(img`
+        . . . . f f f f f . f f f . 
+        . . . f f c c c c f f f f f 
+        . . f c c c c c c b f f f f 
+        . . f c c c c c c 3 c f f f 
+        . f c c c c c c c c 3 3 f . 
+        . f c c 4 c c c c c f f f . 
+        . f f e 4 4 c c c f f f f . 
+        . f f e 4 4 f b f 4 4 f f . 
+        . . f f d d f 1 4 d 4 f . . 
+        . . . f d d d d 4 f f f . . 
+        . . . f e 4 4 4 e e f . . . 
+        . . . f 3 3 3 e d d 4 . . . 
+        . . . f 3 3 3 e d d e . . . 
+        . . . f 6 6 6 f e e f . . . 
+        . . . . f f f f f f . . . . 
+        . . . . . . f f f . . . . . 
+        `)
+    anim_walking_forward = animation.createAnimation(ActionKind.forward, 100)
+    anim_walking_forward.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c 4 4 c c c c f . 
+        . f f c c 4 4 4 4 c c f f . 
+        . f f f b f 4 4 f b f f f . 
+        . f f 4 1 f d d f 1 4 f f . 
+        . . f f d d d d d 4 e f e . 
+        . f e f f b b b e d d 4 e . 
+        . e 4 f b 3 3 3 e d d e . . 
+        . . . f 6 6 6 6 f e e . . . 
+        . . . f f f f f f f . . . . 
+        . . . f f f . . . . . . . . 
+        `)
+    anim_walking_forward.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c 4 4 c c c c f . 
+        . f f c c 4 4 4 4 c c f f . 
+        . f f f b f 4 4 f b f f f . 
+        . f f 4 1 f d d f 1 4 f f . 
+        . e f e 4 d d d d d f f . . 
+        . e 4 d d e b b b f f e f . 
+        . . e d d e 3 3 b e f 4 e . 
+        . . . e e f 6 6 6 6 f . . . 
+        . . . . f f f f f f f . . . 
+        . . . . . . . . f f f . . . 
+        `)
+    anim_walk_back = animation.createAnimation(ActionKind.backward, 100)
+    anim_walk_back.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c c c c c c f f . 
+        . f f c c c c c c c c f f . 
+        . f f c c c c c c f f f f . 
+        . f f f f f f f f f f f f . 
+        . . f f f f f f f f f f . . 
+        . . e f f f f f f f f e . . 
+        . . e f f f f f f f f 4 e . 
+        . . 4 f 3 3 3 3 3 e d d 4 . 
+        . . e f f f f f f e e 4 . . 
+        . . . f f f . . . . . . . . 
+        `)
+    anim_walk_back.addAnimationFrame(img`
+        . . . . . . . . . . . . . . 
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f f c c c c c c c c c f . 
+        . f f c c c c c c c c f f . 
+        . f f f f c c c c c c f f . 
+        . f f f f f f f f f f f f . 
+        . . f f f f f f f f f f . . 
+        . . e f f f f f f f f e . . 
+        . e 4 f f f f f f f f e . . 
+        . 4 d d e 3 3 3 3 3 f 4 . . 
+        . . 4 e e f f f f f f e . . 
+        . . . . . . . . f f f . . . 
+        `)
+    animation.attachAnimation(BB, anim_walk_right)
+    animation.attachAnimation(BB, anim_walk_left)
+    animation.attachAnimation(BB, anim_walking_forward)
+    animation.attachAnimation(BB, anim_walk_back)
+}
+let anim_walk_back: animation.Animation = null
+let anim_walking_forward: animation.Animation = null
+let anim_walk_left: animation.Animation = null
+let anim_walk_right: animation.Animation = null
+let standing_left: animation.Animation = null
+let standing_right: animation.Animation = null
+let BB: Sprite = null
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -130,53 +458,7 @@ scene.setBackgroundImage(img`
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
     `)
 game.showLongText("WELCOME TO THE NATURE PROTECTOR", DialogLayout.Center)
-game.splash("CHOOSE YOUR PLAYER!")
-game.splash("FAE OR JAE?")
-let Fae = sprites.create(img`
-    . . . . . . 5 . 5 . . . . . . . 
-    . . . . . f 5 5 5 f f . . . . . 
-    . . . . f 1 5 2 5 1 6 f . . . . 
-    . . . f 1 6 6 6 6 6 1 6 f . . . 
-    . . . f 6 6 f f f f 6 1 f . . . 
-    . . . f 6 f f d d f f 6 f . . . 
-    . . f 6 f d f d d f d f 6 f . . 
-    . . f 6 f d 3 d d 3 d f 6 f . . 
-    . . f 6 6 f d d d d f 6 6 f . . 
-    . f 6 6 f 3 f f f f 3 f 6 6 f . 
-    . . f f d 3 5 3 3 5 3 d f f . . 
-    . . f d d f 3 5 5 3 f d d f . . 
-    . . . f f 3 3 3 3 3 3 f f . . . 
-    . . . f 3 3 5 3 3 5 3 3 f . . . 
-    . . . f f f f f f f f f f . . . 
-    . . . . . f f . . f f . . . . . 
-    `, SpriteKind.Player)
-Fae.setPosition(34, 60)
-let Jae = sprites.create(img`
-    . . . . . . f f f f . . . . . . 
-    . . . . f f f 2 2 f f f . . . . 
-    . . . f f f 2 2 2 2 f f f . . . 
-    . . f f f e e e e e e f f f . . 
-    . . f f e 2 2 2 2 2 2 e e f . . 
-    . . f e 2 f f f f f f 2 e f . . 
-    . . f f f f e e e e f f f f . . 
-    . f f e f b f 4 4 f b f e f f . 
-    . f e e 4 1 f d d f 1 4 e e f . 
-    . . f e e d d d d d d e e f . . 
-    . . . f e e 4 4 4 4 e e f . . . 
-    . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-    . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-    . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-    . . . . . f f f f f f . . . . . 
-    . . . . . f f . . f f . . . . . 
-    `, SpriteKind.Player)
-Jae.setPosition(109, 60)
-pause(4000)
-let choosePlayer = parseFloat(game.askForString("WRITE THE NAME OF THE PLAYER!"))
-let playerChosen = "fae"
-if (!(playerChosen)) {
-    Fae.destroy()
-    music.magicWand.play()
-}
-game.onUpdateInterval(500, function () {
-	
-})
+game.showLongText("SAVE THE NATURE FROM POLLUSTERS WITH THE HELP OF BB!", DialogLayout.Center)
+player1()
+standing_animation()
+walking_animation()
