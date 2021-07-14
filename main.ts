@@ -9,9 +9,37 @@ enum ActionKind {
     forward,
     backward
 }
+namespace SpriteKind {
+    export const waterSphere = SpriteKind.create()
+    export const currency = SpriteKind.create()
+}
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.setAction(BB, ActionKind.backward)
 })
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    waterSphere = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 6 6 6 6 . . . . . . 
+        . . . . 6 6 6 5 5 6 6 6 . . . . 
+        . . . 7 7 7 7 6 6 6 6 6 6 . . . 
+        . . 6 7 7 7 7 8 8 8 1 1 6 6 . . 
+        . . 7 7 7 7 7 8 8 8 1 1 5 6 . . 
+        . 6 7 7 7 7 8 8 8 8 8 5 5 6 6 . 
+        . 6 7 7 7 8 8 8 6 6 6 6 5 6 6 . 
+        . 6 6 7 7 8 8 6 6 6 6 6 6 6 6 . 
+        . 6 8 7 7 8 8 6 6 6 6 6 6 6 6 . 
+        . . 6 8 7 7 8 6 6 6 6 6 8 6 . . 
+        . . 6 8 8 7 8 8 6 6 6 8 6 6 . . 
+        . . . 6 8 8 8 8 8 8 8 8 6 . . . 
+        . . . . 6 6 8 8 8 8 6 6 . . . . 
+        . . . . . . 6 6 6 6 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, BB, 0, -25)
+    waterSphere.setKind(SpriteKind.waterSphere)
+})
+function createMap () {
+    tiles.setTilemap(tilemap`level1`)
+}
 function standing_animation () {
     standing_right = animation.createAnimation(ActionKind.standing_right, 1000)
     standing_right.addAnimationFrame(img`
@@ -90,6 +118,29 @@ function standing_animation () {
     animation.attachAnimation(BB, standing_right)
     animation.attachAnimation(BB, standing_left)
 }
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    powerBB = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . a a c c c c a . . . . 
+        . a a a c c 1 1 1 1 1 c a . . . 
+        . 1 1 1 1 1 1 1 1 1 1 1 a a . . 
+        . a a a c c 1 1 1 1 1 c a . . . 
+        . . . . . a a a c c c a . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, BB, 50, 0)
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
+    info.changeLifeBy(-1)
+})
 controller.down.onEvent(ControllerButtonEvent.Released, function () {
     animation.setAction(BB, ActionKind.forward)
 })
@@ -125,8 +176,10 @@ function player1 () {
         . . . . f f . . f f . . . . 
         `, SpriteKind.Player)
     controller.moveSprite(BB, 60, 60)
+    tiles.placeOnTile(BB, tiles.getTileLocation(3, 1))
     walking_animation()
     animation.setAction(BB, ActionKind.standing_right)
+    scene.cameraFollowSprite(BB)
 }
 controller.up.onEvent(ControllerButtonEvent.Released, function () {
     animation.setAction(BB, ActionKind.backward)
@@ -134,10 +187,104 @@ controller.up.onEvent(ControllerButtonEvent.Released, function () {
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.setAction(BB, ActionKind.forward)
 })
-function startLevel () {
-    scene.setBackgroundColor(1)
-    tiles.setTilemap(tilemap`level1`)
+function setup_level () {
+	
 }
+function createCoins () {
+    tile_list = scene.getTilesByType(13)
+    for (let value3 of tile_list) {
+        coins = sprites.create(img`
+            . . . . . b b b b b b . . . . . 
+            . . . b b 9 9 9 9 9 9 b b . . . 
+            . . b b 9 9 9 9 9 9 9 9 b b . . 
+            . b b 9 d 9 9 9 9 9 9 9 9 b b . 
+            . b 9 d 9 9 9 9 9 1 1 1 9 9 b . 
+            b 9 d d 9 9 9 9 9 1 1 1 9 9 9 b 
+            b 9 d 9 9 9 9 9 9 1 1 1 9 9 9 b 
+            b 9 3 9 9 9 9 9 9 9 9 9 1 9 9 b 
+            b 5 3 d 9 9 9 9 9 9 9 9 9 9 9 b 
+            b 5 3 3 9 9 9 9 9 9 9 9 9 d 9 b 
+            b 5 d 3 3 9 9 9 9 9 9 9 d d 9 b 
+            . b 5 3 3 3 d 9 9 9 9 d d 5 b . 
+            . b d 5 3 3 3 3 3 3 3 d 5 b b . 
+            . . b d 5 d 3 3 3 3 5 5 b b . . 
+            . . . b b 5 5 5 5 5 5 b b . . . 
+            . . . . . b b b b b b . . . . . 
+            `, SpriteKind.currency)
+        scene.place(value3, coins)
+        animation.runMovementAnimation(
+        coins,
+        animation.animationPresets(animation.bobbing),
+        2000,
+        true
+        )
+    }
+}
+scene.onOverlapTile(SpriteKind.waterSphere, sprites.dungeon.chestOpen, function (sprite, location) {
+    for (let value of tiles.getTilesByType(sprites.dungeon.hazardLava1)) {
+        mySprite = sprites.create(img`
+            7 6 7 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 1 6 6 
+            6 6 6 1 1 6 6 6 6 6 6 6 1 6 1 6 
+            6 6 3 1 1 3 6 6 6 7 6 6 8 1 8 6 
+            6 1 1 8 8 1 1 6 6 7 6 6 6 6 6 6 
+            6 d 1 6 6 1 d 6 6 8 6 6 6 6 6 6 
+            6 8 3 1 1 3 8 6 6 6 6 7 6 6 6 6 
+            6 6 8 d d 8 6 6 6 6 7 7 8 6 6 6 
+            6 6 6 6 6 6 6 1 6 6 7 8 6 6 6 6 
+            6 6 6 6 6 6 1 6 1 6 6 6 1 1 6 6 
+            6 6 1 6 6 6 8 1 8 6 6 3 1 1 3 6 
+            6 1 6 1 6 6 6 6 6 6 1 1 8 8 1 1 
+            6 8 1 8 6 6 6 6 6 6 d 1 6 6 1 d 
+            6 6 6 6 6 6 6 6 6 6 8 3 1 1 3 8 
+            6 6 6 6 6 6 6 6 6 6 6 8 d d 8 6 
+            6 6 7 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            `, SpriteKind.Player)
+        tiles.placeOnTile(mySprite, value)
+        pause(100)
+    }
+    for (let value2 of tiles.getTilesByType(sprites.dungeon.hazardLava0)) {
+        mySprite2 = sprites.create(img`
+            6 6 6 6 7 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 7 6 7 7 6 6 6 6 6 6 6 6 6 6 
+            6 8 7 7 6 7 6 7 7 6 6 6 6 6 6 6 
+            6 6 8 7 6 6 7 7 8 6 6 6 6 6 6 6 
+            6 6 6 8 6 6 7 8 6 6 6 6 6 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 7 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 7 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 8 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 7 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 7 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 8 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 7 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+            `, SpriteKind.Player)
+        tiles.placeOnTile(mySprite2, value2)
+        pause(100)
+    }
+    waterSphere.destroy()
+    scene.setTile(6, img`
+        d d d d d d d d d d d d d d d d 
+        d d d 1 1 d d d d d d d d b d d 
+        d d d 1 1 d d d d d d d d d d d 
+        d d d d d d d d d d d d d d d d 
+        d d b d d d d d d b b d d d d d 
+        d d d d d d d d d b b d d d d d 
+        d d d d d d d d d d d d d d d d 
+        d d d d d d d d d d d d d d d d 
+        d d d d d b d d d d d d d d d d 
+        d d d d d d d d d d d d d d d d 
+        d d d d d d d d d d d d d d d d 
+        1 1 d d d d d d d d d d d d d d 
+        1 1 d d d d d d d d d d b d d d 
+        d d d d d d 1 d d d d d d d d d 
+        d d d d d d d d d d d d d d d d 
+        d d d d d d d d d d d d d d b d 
+        `, false)
+})
 function walking_animation () {
     anim_walk_right = animation.createAnimation(ActionKind.right, 100)
     anim_walk_right.addAnimationFrame(img`
@@ -368,8 +515,14 @@ let anim_walk_back: animation.Animation = null
 let anim_walking_forward: animation.Animation = null
 let anim_walk_left: animation.Animation = null
 let anim_walk_right: animation.Animation = null
+let mySprite2: Sprite = null
+let mySprite: Sprite = null
+let coins: Sprite = null
+let tile_list: tiles.Tile[] = []
+let powerBB: Sprite = null
 let standing_left: animation.Animation = null
 let standing_right: animation.Animation = null
+let waterSphere: Sprite = null
 let BB: Sprite = null
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -495,6 +648,13 @@ scene.setBackgroundImage(img`
     `)
 game.showLongText("WELCOME TO \"THE NATURE PROTECTOR\"", DialogLayout.Center)
 game.showLongText("SAVE THE NATURE FROM POLLUSTERS WITH THE HELP OF BB!", DialogLayout.Center)
+game.showLongText("The lava polluster took over the ponds! Find the treasure box to put the water sphere inside to bring back the water ponds!", DialogLayout.Center)
+game.splash("Press \"B\" for water Sphere")
+createMap()
 player1()
-standing_animation()
 walking_animation()
+standing_animation()
+info.setLife(3)
+game.onUpdate(function () {
+	
+})
