@@ -124,7 +124,7 @@ function player1 () {
         . . . . f f f f f f . . . . 
         . . . . f f . . f f . . . . 
         `, SpriteKind.Player)
-    controller.moveSprite(BB, 70, 70)
+    controller.moveSprite(BB, 60, 60)
     walking_animation()
     animation.setAction(BB, ActionKind.standing_right)
 }
@@ -286,6 +286,24 @@ function walking_animation () {
         . . . . f f f f f f f . . . 
         . . . . . . . . f f f . . . 
         `)
+    anim_walking_forward.addAnimationFrame(img`
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c 4 4 c c c c f . 
+        . f f c c 4 4 4 4 c c f f . 
+        . f f f b f 4 4 f b f f f . 
+        . f f 4 1 f d d f 1 4 f f . 
+        . . f f d d d d d d f f . . 
+        . . e f e 4 4 4 4 e f e . . 
+        . e 4 f b 3 3 3 3 b f 4 e . 
+        . 4 d f 3 3 3 3 3 3 c d 4 . 
+        . 4 4 f 6 6 6 6 6 6 f 4 4 . 
+        . . . . f f f f f f . . . . 
+        . . . . f f . . f f . . . . 
+        `)
     anim_walk_back = animation.createAnimation(ActionKind.backward, 100)
     anim_walk_back.addAnimationFrame(img`
         . . . . . . . . . . . . . . 
@@ -322,6 +340,24 @@ function walking_animation () {
         . 4 d d e 3 3 3 3 3 f 4 . . 
         . . 4 e e f f f f f f e . . 
         . . . . . . . . f f f . . . 
+        `)
+    anim_walk_back.addAnimationFrame(img`
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c c c c c c c f . 
+        . f f c c c c c c c c f f . 
+        . f f f c c c c c c f f f . 
+        . f f f f f f f f f f f f . 
+        . . f f f f f f f f f f . . 
+        . . e f f f f f f f f e . . 
+        . e 4 f f f f f f f f 4 e . 
+        . 4 d f 3 3 3 3 3 3 c d 4 . 
+        . 4 4 f 6 6 6 6 6 6 f 4 4 . 
+        . . . . f f f f f f . . . . 
+        . . . . f f . . f f . . . . 
         `)
     animation.attachAnimation(BB, anim_walk_right)
     animation.attachAnimation(BB, anim_walk_left)
@@ -457,7 +493,7 @@ scene.setBackgroundImage(img`
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
     `)
-game.showLongText("WELCOME TO THE NATURE PROTECTOR", DialogLayout.Center)
+game.showLongText("WELCOME TO \"THE NATURE PROTECTOR\"", DialogLayout.Center)
 game.showLongText("SAVE THE NATURE FROM POLLUSTERS WITH THE HELP OF BB!", DialogLayout.Center)
 player1()
 standing_animation()
