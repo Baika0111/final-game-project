@@ -15,10 +15,8 @@ namespace SpriteKind {
     export const flowerOnWater = SpriteKind.create()
     export const water = SpriteKind.create()
     export const powerBB = SpriteKind.create()
+    export const doorOpened = SpriteKind.create()
 }
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.greenOuterSouthWest, function (sprite, location) {
-    game.splash("Congratulations! You passed level 1!")
-})
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.setAction(BB, ActionKind.backward)
 })
@@ -40,16 +38,14 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . 6 6 8 8 8 8 6 6 . . . . 
         . . . . . . 6 6 6 6 . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, BB, 0, -25)
+        `, BB, 0, 25)
     waterSphere.setKind(SpriteKind.waterSphere)
 })
 function createMap () {
-    let level = 0
     if (level == 1) {
-        tiles.setTilemap(tilemap`level1`)
-        tiles.placeOnTile(BB, tiles.getTileLocation(1, 0))
-    } else {
-        tiles.setTilemap(tilemap`level1`)
+        tiles.setTilemap(tilemap`level9`)
+    } else if (level != 2) {
+        tiles.setTilemap(tilemap`level10`)
     }
 }
 function standing_animation () {
@@ -155,108 +151,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         `, BB, 70, 0)
     powerBB.setKind(SpriteKind.powerBB)
+    powerBB.follow(mySprite3)
 })
 controller.down.onEvent(ControllerButtonEvent.Released, function () {
     animation.setAction(BB, ActionKind.forward)
 })
-controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.setAction(BB, ActionKind.left)
-})
-controller.right.onEvent(ControllerButtonEvent.Released, function () {
-    animation.setAction(BB, ActionKind.right)
-})
-controller.left.onEvent(ControllerButtonEvent.Released, function () {
-    animation.setAction(BB, ActionKind.left)
-})
-function createEnemy () {
-    mySprite3 = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . 2 2 2 . . 2 2 2 . . . . . . . 
-        . 2 4 4 2 2 4 4 2 2 2 2 . . . . 
-        . . 2 4 4 4 4 4 4 4 4 4 2 . . . 
-        . . 2 4 2 2 4 4 4 2 2 4 4 2 . . 
-        2 2 4 2 4 4 2 4 2 4 4 2 4 2 . . 
-        2 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 
-        2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 2 
-        . 2 4 4 4 2 2 2 2 4 4 4 4 4 2 . 
-        . 2 4 4 2 4 4 4 4 2 4 4 2 2 . . 
-        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
-        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
-        . . 2 2 2 4 4 4 4 2 2 . . . . . 
-        . . . . . 2 2 2 2 . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Enemy)
-    tiles.placeOnTile(mySprite3, tiles.getTileLocation(29, 2))
-    mySprite3.setVelocity(50, 50)
-    mySprite3.setBounceOnWall(true)
-}
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.setAction(BB, ActionKind.right)
-})
-function player1 () {
-    BB = sprites.create(img`
-        . f f f . f f f f . f f f . 
-        f f f f f c c c c f f f f f 
-        f f f f b c c c c b f f f f 
-        f f f c 3 c c c c 3 c f f f 
-        . f 3 3 c c c c c c 3 3 f . 
-        . f c c c c 4 4 c c c c f . 
-        . f f c c 4 4 4 4 c c f f . 
-        . f f f b f 4 4 f b f f f . 
-        . f f 4 1 f d d f 1 4 f f . 
-        . . f f d d d d d d f f . . 
-        . . e f e 4 4 4 4 e f e . . 
-        . e 4 f b 3 3 3 3 b f 4 e . 
-        . 4 d f 3 3 3 3 3 3 c d 4 . 
-        . 4 4 f 6 6 6 6 6 6 f 4 4 . 
-        . . . . f f f f f f . . . . 
-        . . . . f f . . f f . . . . 
-        `, SpriteKind.Player)
-    controller.moveSprite(BB, 60, 60)
-    walking_animation()
-    animation.setAction(BB, ActionKind.standing_right)
-    scene.cameraFollowSprite(BB)
-    standing_animation()
-    info.setLife(5)
-}
-controller.up.onEvent(ControllerButtonEvent.Released, function () {
-    animation.setAction(BB, ActionKind.backward)
-})
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    animation.setAction(BB, ActionKind.forward)
-})
-sprites.onOverlap(SpriteKind.powerBB, SpriteKind.Enemy, function (sprite, otherSprite) {
-    otherSprite.destroy(effects.fire, 500)
-})
-function createCoins () {
-    coins = sprites.create(img`
-        . . . . . b b b b b b . . . . . 
-        . . . b b 9 9 9 9 9 9 b b . . . 
-        . . b b 9 9 9 9 9 9 9 9 b b . . 
-        . b b 9 d 9 9 9 9 9 9 9 9 b b . 
-        . b 9 d 9 9 9 9 9 1 1 1 9 9 b . 
-        b 9 d d 9 9 9 9 9 1 1 1 9 9 9 b 
-        b 9 d 9 9 9 9 9 9 1 1 1 9 9 9 b 
-        b 9 3 9 9 9 9 9 9 9 9 9 1 9 9 b 
-        b 5 3 d 9 9 9 9 9 9 9 9 9 9 9 b 
-        b 5 3 3 9 9 9 9 9 9 9 9 9 d 9 b 
-        b 5 d 3 3 9 9 9 9 9 9 9 d d 9 b 
-        . b 5 3 3 3 d 9 9 9 9 d d 5 b . 
-        . b d 5 3 3 3 3 3 3 3 d 5 b b . 
-        . . b d 5 d 3 3 3 3 5 5 b b . . 
-        . . . b b 5 5 5 5 5 5 b b . . . 
-        . . . . . b b b b b b . . . . . 
-        `, SpriteKind.currency)
-    tiles.placeOnRandomTile(coins, sprites.castle.tilePath5)
-    animation.runMovementAnimation(
-    coins,
-    animation.animationPresets(animation.bobbing),
-    2000,
-    true
-    )
-}
-scene.onOverlapTile(SpriteKind.waterSphere, sprites.dungeon.chestOpen, function (sprite, location) {
+scene.onOverlapTile(SpriteKind.waterSphere, assets.tile`myTile25`, function (sprite, location) {
     for (let value of tiles.getTilesByType(sprites.dungeon.hazardLava1)) {
         mySprite = sprites.create(img`
             7 6 7 6 6 6 6 6 6 6 6 6 6 6 6 6 
@@ -299,7 +199,185 @@ scene.onOverlapTile(SpriteKind.waterSphere, sprites.dungeon.chestOpen, function 
             `, SpriteKind.water)
         tiles.placeOnTile(mySprite2, value2)
     }
+    for (let value4 of tiles.getTilesByType(sprites.dungeon.doorClosedEast)) {
+        mySprite4 = sprites.create(img`
+            c c 6 c c c 6 6 c c c c 6 7 7 6 
+            c c 6 c c c 6 6 c 6 6 c 6 7 7 6 
+            c c c c c c 6 6 c 6 7 c 6 7 7 6 
+            c c c c c c c 6 c 6 7 c 6 6 7 c 
+            c c 6 c c c c c c 6 7 c c c c c 
+            c c 6 c c c 6 c c 6 7 c 6 6 7 6 
+            c c 6 c c 6 6 c c 6 6 c 6 7 7 6 
+            c c 6 c c 6 6 c c c 6 c 6 7 7 6 
+            c c 6 c c 6 6 6 c c c c 6 7 7 6 
+            c c 6 c c c 6 6 c c 6 c 6 7 7 6 
+            c c c c 6 c 6 6 c 6 7 c 6 7 7 6 
+            c c c c 6 c 6 6 c 6 7 c 6 7 7 c 
+            c c 6 c 6 c c c c 6 7 c c c c c 
+            c c 6 c 6 c 6 6 c 6 7 c c 7 7 6 
+            c c 6 c 6 c 6 6 c 6 7 c 6 7 7 6 
+            c c 6 c c c 6 6 c 6 6 c 6 7 7 6 
+            `, SpriteKind.doorOpened)
+        tiles.placeOnTile(mySprite4, value4)
+        BB.say("We opened the door to next level!", 1000)
+    }
 })
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.left)
+})
+controller.right.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.right)
+})
+controller.left.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.left)
+})
+function createEnemy () {
+    mySprite3 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . 2 2 2 . . 2 2 2 . . . . . . . 
+        . 2 4 4 2 2 4 4 2 2 2 2 . . . . 
+        . . 2 4 4 4 4 4 4 4 4 4 2 . . . 
+        . . 2 4 2 2 4 4 4 2 2 4 4 2 . . 
+        2 2 4 2 4 4 2 4 2 4 4 2 4 2 . . 
+        2 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 
+        2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 2 
+        . 2 4 4 4 2 2 2 2 4 4 4 4 4 2 . 
+        . 2 4 4 2 4 4 4 4 2 4 4 2 2 . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . . 2 2 2 4 4 4 4 2 2 . . . . . 
+        . . . . . 2 2 2 2 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    mySprite3.setVelocity(50, 50)
+    mySprite3.setBounceOnWall(true)
+}
+function createEnemy2 () {
+    myEnemy = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . 2 2 2 . 2 2 2 2 . . . . . . . 
+        . 2 4 4 2 2 4 4 2 2 2 2 . . . . 
+        . . 2 4 4 4 4 4 4 4 4 4 2 . . . 
+        . . 2 4 2 2 4 4 4 2 2 4 4 2 . . 
+        2 2 4 2 4 4 2 4 2 4 4 2 4 2 . . 
+        2 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 
+        2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 2 
+        . 2 4 4 4 2 2 2 2 4 4 4 4 4 2 . 
+        . 2 4 4 2 4 4 4 4 2 4 4 2 2 . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . . 2 2 2 4 4 4 4 2 2 . . . . . 
+        . . . . . 2 2 2 2 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    myEnemy.setVelocity(60, 50)
+    myEnemy.setBounceOnWall(true)
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.doorOpened, function (sprite, otherSprite) {
+    if (level == 1) {
+        level += 1
+        createMap()
+    } else if (level == 2) {
+        game.over(true)
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.right)
+})
+function player1 () {
+    BB = sprites.create(img`
+        . f f f . f f f f . f f f . 
+        f f f f f c c c c f f f f f 
+        f f f f b c c c c b f f f f 
+        f f f c 3 c c c c 3 c f f f 
+        . f 3 3 c c c c c c 3 3 f . 
+        . f c c c c 4 4 c c c c f . 
+        . f f c c 4 4 4 4 c c f f . 
+        . f f f b f 4 4 f b f f f . 
+        . f f 4 1 f d d f 1 4 f f . 
+        . . f f d d d d d d f f . . 
+        . . e f e 4 4 4 4 e f e . . 
+        . e 4 f b 3 3 3 3 b f 4 e . 
+        . 4 d f 3 3 3 3 3 3 c d 4 . 
+        . 4 4 f 6 6 6 6 6 6 f 4 4 . 
+        . . . . f f f f f f . . . . 
+        . . . . f f . . f f . . . . 
+        `, SpriteKind.Player)
+    controller.moveSprite(BB, 60, 60)
+    walking_animation()
+    standing_animation()
+    scene.cameraFollowSprite(BB)
+}
+controller.up.onEvent(ControllerButtonEvent.Released, function () {
+    animation.setAction(BB, ActionKind.backward)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    animation.setAction(BB, ActionKind.forward)
+})
+sprites.onOverlap(SpriteKind.powerBB, SpriteKind.Enemy, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.fire, 500)
+    sprite.destroy()
+})
+function createEnemy3 () {
+    myEnemy2 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . 2 2 2 . 2 2 2 2 . . . . . . . 
+        . 2 4 4 2 2 4 4 2 2 2 2 . . . . 
+        . . 2 4 4 4 4 4 4 4 4 4 2 . . . 
+        . . 2 4 2 2 4 4 4 2 2 4 4 2 . . 
+        2 2 4 2 4 4 2 4 2 4 4 2 4 2 . . 
+        2 4 4 4 4 4 4 4 4 4 4 4 4 2 2 2 
+        2 2 4 4 4 4 4 4 4 4 4 4 4 4 4 2 
+        . 2 4 4 4 2 2 2 2 4 4 4 4 4 2 2 
+        . 2 4 4 2 4 4 4 4 2 4 4 2 2 . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . 2 4 4 4 4 4 4 4 4 4 2 . . . . 
+        . . 2 2 2 4 4 4 4 2 2 . . . . . 
+        . . . . . 2 2 2 2 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    myEnemy2.setVelocity(70, 50)
+    myEnemy2.setBounceOnWall(true)
+}
+info.onLifeZero(function () {
+    level = 1
+})
+function setup () {
+    game.splash("Level " + level)
+    createMap()
+    player1()
+    tiles.placeOnTile(BB, tiles.getTileLocation(1, 0))
+}
+function createCoins () {
+    coins = sprites.create(img`
+        . . . . . b b b b b b . . . . . 
+        . . . b b 9 9 9 9 9 9 b b . . . 
+        . . b b 9 9 9 9 9 9 9 9 b b . . 
+        . b b 9 d 9 9 9 9 9 9 9 9 b b . 
+        . b 9 d 9 9 9 9 9 1 1 1 9 9 b . 
+        b 9 d d 9 9 9 9 9 1 1 1 9 9 9 b 
+        b 9 d 9 9 9 9 9 9 1 1 1 9 9 9 b 
+        b 9 3 9 9 9 9 9 9 9 9 9 1 9 9 b 
+        b 5 3 d 9 9 9 9 9 9 9 9 9 9 9 b 
+        b 5 3 3 9 9 9 9 9 9 9 9 9 d 9 b 
+        b 5 d 3 3 9 9 9 9 9 9 9 d d 9 b 
+        . b 5 3 3 3 d 9 9 9 9 d d 5 b . 
+        . b d 5 3 3 3 3 3 3 3 d 5 b b . 
+        . . b d 5 d 3 3 3 3 5 5 b b . . 
+        . . . b b 5 5 5 5 5 5 b b . . . 
+        . . . . . b b b b b b . . . . . 
+        `, SpriteKind.currency)
+    tiles.placeOnRandomTile(coins, sprites.castle.tilePath1)
+    animation.runMovementAnimation(
+    coins,
+    animation.animationPresets(animation.bobbing),
+    2000,
+    true
+    )
+}
 function walking_animation () {
     anim_walk_right = animation.createAnimation(ActionKind.right, 100)
     anim_walk_right.addAnimationFrame(img`
@@ -606,15 +684,19 @@ let anim_walk_back: animation.Animation = null
 let anim_walking_forward: animation.Animation = null
 let anim_walk_left: animation.Animation = null
 let anim_walk_right: animation.Animation = null
+let coins: Sprite = null
+let myEnemy2: Sprite = null
+let myEnemy: Sprite = null
+let mySprite4: Sprite = null
 let mySprite2: Sprite = null
 let mySprite: Sprite = null
-let coins: Sprite = null
 let mySprite3: Sprite = null
 let powerBB: Sprite = null
 let standing_left: animation.Animation = null
 let standing_right: animation.Animation = null
 let waterSphere: Sprite = null
 let BB: Sprite = null
+let level = 0
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -741,15 +823,18 @@ game.showLongText("WELCOME TO \"THE NATURE PROTECTOR\"", DialogLayout.Center)
 game.showLongText("SAVE THE NATURE FROM POLLUSTERS WITH THE HELP OF BB!", DialogLayout.Center)
 game.showLongText("The lava polluster took over the ponds! Find the treasure box to put the water sphere inside to bring back the water ponds!", DialogLayout.Center)
 game.splash("Press \"B\" for water sphere")
-createMap()
-player1()
+level = 1
+setup()
 createEnemy()
+createEnemy2()
+createEnemy3()
+info.setLife(5)
 game.onUpdate(function () {
 	
 })
-game.onUpdateInterval(1000, function () {
+game.onUpdateInterval(5000, function () {
     createCoins()
 })
-game.onUpdateInterval(6000, function () {
-    createEnemy()
+game.onUpdateInterval(10000, function () {
+	
 })
