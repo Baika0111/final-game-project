@@ -16,6 +16,7 @@ namespace SpriteKind {
     export const water = SpriteKind.create()
     export const powerBB = SpriteKind.create()
     export const doorOpened = SpriteKind.create()
+    export const closedChest = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     animation.setAction(BB, ActionKind.backward)
@@ -195,6 +196,27 @@ scene.onOverlapTile(SpriteKind.waterSphere, assets.tile`myTile25`, function (spr
             `, SpriteKind.water)
         tiles.placeOnTile(mySprite2, value2)
     }
+    for (let value3 of tiles.getTilesByType(assets.tile`myTile25`)) {
+        chest = sprites.create(img`
+            . b b . . . . . . . . . . b b . 
+            b b b b b b b b b b b b b b b b 
+            b c e e e e e e e e e e e e c b 
+            b e e e e e e e e e e e e e e b 
+            b e e e e e c b b c e e e e e b 
+            c c c c c c b c c b c c c c c c 
+            c b b b b b b c c b b b b b b c 
+            b b b b b b b d d b b b b b b b 
+            b e e e e e e e e e e e e e e b 
+            b e e e e e e e e e e e e e e b 
+            b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+            b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+            b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+            b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+            . b e 4 4 4 4 4 4 4 4 4 4 e b . 
+            . . b b b b b b b b b b b b . . 
+            `, SpriteKind.closedChest)
+        tiles.placeOnTile(chest, value3)
+    }
     for (let value4 of tiles.getTilesByType(sprites.dungeon.doorClosedEast)) {
         mySprite4 = sprites.create(img`
             c c 6 c c c 6 6 c c c c 6 7 7 6 
@@ -319,11 +341,6 @@ function createCoins () {
     2000,
     true
     )
-}
-function clearLevel () {
-    for (let value of sprites.allOfKind(SpriteKind.currency)) {
-        value.destroy()
-    }
 }
 function walking_animation () {
     anim_walk_right = animation.createAnimation(ActionKind.right, 100)
@@ -633,6 +650,7 @@ let anim_walk_left: animation.Animation = null
 let anim_walk_right: animation.Animation = null
 let coins: Sprite = null
 let mySprite4: Sprite = null
+let chest: Sprite = null
 let mySprite2: Sprite = null
 let mySprite: Sprite = null
 let mySprite3: Sprite = null
@@ -771,10 +789,10 @@ game.splash("Press \"B\" for water sphere")
 level = 1
 createMap()
 player1()
-info.setLife(5)
+info.setLife(3)
 game.onUpdateInterval(5000, function () {
-    createCoins()
-})
-game.onUpdateInterval(8000, function () {
     createEnemy()
+})
+game.onUpdateInterval(2000, function () {
+    createCoins()
 })
